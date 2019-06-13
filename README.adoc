@@ -1,0 +1,78 @@
+= Professionelle Softwareentwicklung: Projekt 4
+:icons: font
+:icon-set: fa
+
+IMPORTANT: Die Abgabefrist ist der 21.06.2019 um 20:00 Uhr (Ortszeit Düsseldorf).
+Eine *fristgerechte Abgabe in AUAS ist zwingend erforderlich*. Geben Sie am Besten sofort in AUAS ab, ihr Projekt muss nicht fertig sein. Achten Sie darauf, dass in der Repository URL ihr GitHub Nutzername enthalten ist.
+
+== Einführung
+
+Ihre Aufgabe ist die Implementierung der automatischen Abgabenverteilung des AUAS Systems. Sie erhalten eine startfähige Spring Boot Web-Anwendung, die schon das Rahmenwerk implementiert.
+
+IMPORTANT: Sie können die Anwendung ausprobieren, brauchen aber nicht verstehen, wie die Anwendung insgesamt funktioniert. Es reicht, wenn Sie sich mit einigen wenigen Klassen, die unten beschrieben sind befassen.
+
+== Aufgabenstellung
+Der vorgegebene Code ruft beim Drücken des Buttons "Automatisch zuordnen" die Methode `abgabenZuordnen` der Klasse `auas.services.ZuordnungsService` auf. Der dort vorhandene Beispielcode verteilt alle Abgaben unfairerweise auf die erste Korrektorinfootnote:[Ich verwende in der Aufgabenbeschreibung das generische Femininum.]. Sie sollen hier eine faire Verteilung implementieren, die folgende Kriterien erfüllt:
+
+. Die Anzahl der Abgaben, die eine Korrektorin zugeordnet bekommt, ist proportional zu ihren Arbeitsstunden.
+. Es können nachträglich Abgaben hinzugefügt werden, diese können per Klick auf den Button "Automatisch zuordnen" zugeordnet werden. Das geht so lange, bis die Abgaben eines neuren Blattes zugeordnet werden.
+. Eine einmal vorgenommene Zuordnung einer Abgabe zu einem Korrektor, wird niemals geändert.
+. Es wird Korrektorinnen geben, die überproportional viele Abgaben erhalten. Wir bezeichnen das als Überhang. Es soll über die Zeit eine faire Zuordnung der Überhänge geben, d.h., es darf keine Korrektorin systematisch benachteiligt werden. Bei der Zuordnung müssen Sie also die vorangegangenen Zuordnungen mit berücksichtigen.
+
+Es könnte für Sie interessant sein, die Klassen `BlattService` und `KorrektorService` anzuschauen. Beide Klassen werden Sie bei der Implementierung benötigen. In der `ZuordnungsService` Klasse werden die beiden Klassen injiziert. Außerdem kann es sich lohnen, die drei Datenmodell Klassen `Abgabe`, `Blatt` und `Korrektor` aus dem `auas.read_only.domain` Package anzuschauen.
+
+Ändern dürfen Sie ausschließlich die Tests unter `src/test/java`, die Klasse `ZuordnungsService` (Ausnahme: Der Konstruktor muss bleiben, wie er ist) sowie Klassen, die Sie selber hinzufügen. Beachten Sie bitte, das am Ende einer Zuordnung das modifizierte Blatt mit Hilfe des `BlattService` gespeichert werden muss, ansonsten funktioniert die Weboberfläche nicht mehr.
+
+== Codequalität
+
+Ihr Code sollte die Regeln die Sie über guten Code kennengelernt haben befolgen (Regeln aus Projekt 1, SOLID Prinzipien, Information Hiding Principle, Low Coupling/High Cohesion, usw.).
+
+== Testabdeckung/TDD
+Der von Ihnen geschriebene Code muss eine Testabdeckung von 100% mit *sinnvollen* Tests erreichen. Sollten Sie aus gutem Grund die 100%ige Abdeckung nicht erreichen, müssen Sie das dokumentieren.
+Sie müssen *testgetrieben* arbeiten, also muss zunächst ein Test geschrieben werden und später die Logik. Damit wir das nachvollziehen können, müssen Sie *zuerst* den Test und *danach* den Code committen, der den Test löst. Anschließend können Sie den Code noch einmal überarbeiten (Refactoring) und auch wieder mit einem Commit abschließen. Demnach werden pro Zyklus zwei oder drei Commits erwartet (Test + Code oder Test + Code + Refactoring).
+
+== Testabdeckung messen
+Es wird empfohlen, selber die Abdeckung Ihres Codes durch Tests zu messen. Dazu können Sie in IntelliJ das eingebaute Feature https://www.jetbrains.com/help/idea/code-coverage.html["Run with Coverage"] (auch zu sehen in der Aufzeichnung zu Übung 8) verwenden. Wenn Sie Eclipse benutzen, können Sie das Plugin https://www.eclemma.org/[EclEmma] über den Marktplatz installieren, danach gibt es auch dort ein Starten mit Coverage-Analyse. Sie können die Analyse auch mit Hilfe des https://docs.gradle.org/current/userguide/jacoco_plugin.html[Jacoco Plugins] direkt in Gradle verwenden. Das mitgelieferte Gradle Script ist bereits konfiguriert. Führen Sie dafür den entsprechenden Task aus:
+
+    gradle jacocoTestReport
+
+Dann erhalten Sie einen HTML Testreport an dieser Stelle: `build/jacoco/html/index.html` Diese Datei können Sie mit einem Webbrowser Ihrer Wahl öffnen.
+
+== Ausprobieren der Anwendung
+Die Anwendung kann aus der IDE heraus oder mit `gradle bootRun` gestartet werden. Es wird ein Webserver auf dem lokalen Port 8080 gestartet. Sollten Sie bereits eine Anwendung auf Ihrem Rechner ausführen, die Port 8080 belegt, können Sie den Port in der Datei `application.properties` umkonfigurieren. Nachdem der Server gestartet wurde, können Sie in Ihrem Browser die Anwendung unter `http://localhost:8080` oder `http://127.0.0.1:8080` aufrufen.
+
+In der Benutzeroberfläche der Anwendung finden Sie im unteren Teil eine Liste der Korrektorinnen und der wöchentlichen Stunden. Im oberen Teil finden Sie die Übungsblätter.
+
+Pro Blatt `B` gibt es drei Buttons mit folgenden Funktionen:
+
+* Der erste Button zeigt, wie die Abgaben für Blatt `B` auf die Korrektorinnen zugeordnet sind.
+* Der zweite Button ordnet die offenen Abgaben für Blatt `B` und alle vorhergehenden Blätter zu.
+* Der dritte Button erzeugt neue Abgaben. Der Button ist nur verfügbar, wenn es noch kein neueres Blatt gibt, das schon zugeordnet wurde.
+
+Diese Logik ist gedacht um Ihre Aufgabe etwas leichter zu machen. Sie können nämlich bei der Implementierung der fairen Verteilung folgende Annahmen treffen:
+
+. Wenn ein Blatt zugeordnet wird, sind bereits alle älteren Blätter zugeordnet.
+. Wenn ein Blatt zugeordnet wird, kann es keine neuen Abgaben für ältere Blätter geben.
+
+
+== Abgabe (organisatorisch/technisch)
+Sie geben das Projekt über GitHub ab, es zählt der letzte Commit vor der Abgabefrist.
+Zusätzlich zu der Abgabe über GitHub *müssen* wir noch einige Daten in AUAS von Ihnen bekommen, um die Korrektoren zuzuordnen. Geben Sie im Textfeld zum Projekt also die Daten in folgendem Format ab:
+
+```
+name: Ihr GitHub Username
+url: Die URL Ihres Repositories in dem Projekt 4 ist
+```
+
+Beispiel:
+```
+name: propratester
+url: https://github.com/hhu-propra1-ss-19/projekt-4-testing-propratester
+```
+
+Das Repository *muss* mit Hilfe des Classroom Links erzeugt werden und darf nicht geändert werden, d.h. die URL muss mit `https://github.com/hhu-propra1-ss-19/` beginnen.
+
+IMPORTANT: Nachbearbeitungen erfordern zwingend, dass es eine Abgabe in AUAS gibt. Es werden keine Nachreichungen angenommen (auch nicht gegen Joker).
+
+== Videos
+Es ist recht einfach, trotz einer vollständigen Abdeckung aller Codezeilen Fehler im Code zu haben. Ich demonstriere das in einem https://youtu.be/XdFLvDw10Xc[Video]. Sie sollten derartige Metriken, obwohl sie sicherlich das Vertrauen in den Code steigern, immer auch mit etwas Vorsicht betrachten und kritisch hinterfragen.
