@@ -35,8 +35,8 @@ public class ZuordnungsService {
 
 		List<Abgabe> abgaben = blatt.getUnzugeordneteAbgaben();
 
-		for (Abgabe abgabe : abgaben) {
-			blatt.abgabeZuordnen(abgabe, korrektor);
+		for (int i =0; i<korrektor.getStunden(); i++) {
+			blatt.abgabeZuordnen(abgaben.get(i), korrektor);
 		}
 
 		blattService.save(blatt);
