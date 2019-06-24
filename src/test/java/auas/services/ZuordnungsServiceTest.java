@@ -117,10 +117,11 @@ public class ZuordnungsServiceTest {
 
 		zuordnungsService.abgabenZuordnen(1);
 
-		int anzahlAbagbenAnKorrektor= 0;	// hilfsvariable
-		for(int i=0; i<anzahlAbgaben; i++) {
-			if (abgaben.get(i).getKorrektor() != null && abgaben.get(i).getKorrektor().getName() == "willi"){
-				anzahlAbagbenAnKorrektor = anzahlAbagbenAnKorrektor + 1;
+		int anzahlAbagbenAnKorrektor= 0;
+		List<Abgabe> zugeordneteAbgaben= blatt.getZugeordneteAbgaben();
+		for(Abgabe abgabe:zugeordneteAbgaben ){
+			if(abgabe.getKorrektor().getName()== willi.getName()){
+				anzahlAbagbenAnKorrektor++;
 			}
 		}
 		assertEquals((long) 10, (long) anzahlAbagbenAnKorrektor);
@@ -149,15 +150,44 @@ public class ZuordnungsServiceTest {
 
 		zuordnungsService.abgabenZuordnen(1);
 
-		int anzahlAbagbenAnKorrektor= 0;	// hilfsvariable
-		for(int i=0; i<anzahlAbagaben; i++) {
-			if (abgaben.get(i).getKorrektor() != null && abgaben.get(i).getKorrektor().getName() == "hans"){
-				anzahlAbagbenAnKorrektor = anzahlAbagbenAnKorrektor + 1;
+		int anzahlAbagbenAnKorrektor= 0;
+		List<Abgabe> zugeordneteAbgaben= blatt.getZugeordneteAbgaben();
+		for(Abgabe abgabe:zugeordneteAbgaben ){
+			if(abgabe.getKorrektor().getName()== hans.getName()){
+				anzahlAbagbenAnKorrektor++;
 			}
 		}
+
 		assertEquals((long) 1, (long) anzahlAbagbenAnKorrektor);
 
 	}
+
+	@Test
+	public void zweiKorrektor23Abgaben_prüftUnzugeordneteAbgaben() {
+		LinkedList<Korrektor> korrektors = new LinkedList<>();
+		Korrektor willi = new Korrektor(UUID.randomUUID(), "willi", 10);
+		Korrektor hans = new Korrektor(UUID.randomUUID(), "hans", 10);
+		korrektors.add(willi);
+		korrektors.add(hans);
+		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
+
+		LinkedList<Abgabe> abgaben = new LinkedList<>();
+		int anzahlAbagaben= 23;
+		for (int i = 0; i < anzahlAbagaben; i++) {
+			abgaben.add(new Abgabe());
+		}
+		Blatt blatt = new Blatt(1, abgaben);
+		when(blattServiceMock.getBlatt(1)).thenReturn(blatt);
+
+		when(blattMock.getUnzugeordneteAbgaben()).thenReturn(abgaben);
+
+
+		zuordnungsService.abgabenZuordnen(1);
+
+		assertEquals((long) 3, (long) blatt.getUnzugeordneteAbgaben().size());
+
+	}
+
 
 
 }
