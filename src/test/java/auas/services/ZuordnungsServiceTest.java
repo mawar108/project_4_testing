@@ -96,7 +96,7 @@ public class ZuordnungsServiceTest {
 	}
 
 	@Test
-	public void zweiKorrektorElfAbgaben_ErsterKorrektorErhältAbgaben() {
+	public void zweiKorrektorElfAbgaben_prüftErstenKorrektorErhältAbgaben() {
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "willi", 10);
 		Korrektor hans = new Korrektor(UUID.randomUUID(), "hans", 10);
@@ -104,8 +104,9 @@ public class ZuordnungsServiceTest {
 		korrektors.add(hans);
 		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
 
+		int anzahlAbgaben= 11;
 		LinkedList<Abgabe> abgaben = new LinkedList<>();
-		for (int i = 0; i < 11; i++) {
+		for (int i = 0; i < anzahlAbgaben; i++) {
 			abgaben.add(new Abgabe());
 		}
 		Blatt blatt = new Blatt(1, abgaben);
@@ -117,7 +118,7 @@ public class ZuordnungsServiceTest {
 		zuordnungsService.abgabenZuordnen(1);
 
 		int anzahlAbagbenAnKorrektor= 0;	// hilfsvariable
-		for(int i=0; i<11; i++) {
+		for(int i=0; i<anzahlAbgaben; i++) {
 			if (abgaben.get(i).getKorrektor() != null && abgaben.get(i).getKorrektor().getName() == "willi"){
 				anzahlAbagbenAnKorrektor = anzahlAbagbenAnKorrektor + 1;
 			}
@@ -127,7 +128,7 @@ public class ZuordnungsServiceTest {
 	}
 
 	@Test
-	public void zweiKorrektorElfAbgaben_ZweiterKorrektorErhältAbgaben() {
+	public void zweiKorrektorElfAbgaben_prüftZweitenKorrektorErhältAbgaben() {
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "willi", 10);
 		Korrektor hans = new Korrektor(UUID.randomUUID(), "hans", 10);
@@ -136,7 +137,7 @@ public class ZuordnungsServiceTest {
 		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
 
 		LinkedList<Abgabe> abgaben = new LinkedList<>();
-		int anzahlAbagaben= 13;
+		int anzahlAbagaben= 11;
 		for (int i = 0; i < anzahlAbagaben; i++) {
 			abgaben.add(new Abgabe());
 		}
@@ -154,7 +155,7 @@ public class ZuordnungsServiceTest {
 				anzahlAbagbenAnKorrektor = anzahlAbagbenAnKorrektor + 1;
 			}
 		}
-		assertEquals((long) 3, (long) anzahlAbagbenAnKorrektor);
+		assertEquals((long) 1, (long) anzahlAbagbenAnKorrektor);
 
 	}
 

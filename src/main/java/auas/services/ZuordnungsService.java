@@ -24,43 +24,27 @@ public class ZuordnungsService {
 	}
 
 	public void abgabenZuordnen(int id) {
-
-		// Beispielimplementierung: Der erste Korrektor bekommt alle Abgaben
-		// 1. Verstehen Sie die BlattService API. Schauen Sie
-		// auch die hier nicht verwendeten Methoden an
-		// 2. Löschen Sie diesen Code, bevor Sie die faire Verteilung
-		// implementieren
-	/*
 		Blatt blatt = blattService.getBlatt(id);
+		List<Korrektor> korrektoren= (LinkedList) korrektorService.getAll();
 
-		int anzahlKorrektoren= korrektorService.getAll().size();
+		int nextKorrektor=0;
 		int abgabeAnzahl= 0;
+		int korrektorAnzahl= korrektoren.size();
 
-		List<Korrektor> korrektors= (LinkedList) korrektorService.getAll();
+		Korrektor korrektor= korrektoren.get(nextKorrektor);
 		List<Abgabe> abgaben = blatt.getUnzugeordneteAbgaben();
 
-
-		for(int i= 0; i<anzahlKorrektoren; i++){
-			Korrektor korrektor = korrektors.get(i);
-			for (int j =0; j<korrektor.getStunden(); j++) {
-				blatt.abgabeZuordnen(abgaben.get(abgabeAnzahl), korrektor);
-				abgabeAnzahl++;
+		for(int j= 0; j<korrektorAnzahl;j++){
+			for (int i =0; i<korrektor.getStunden(); i++) {
+				if(abgabeAnzahl<abgaben.size()) {
+					blatt.abgabeZuordnen(abgaben.get(abgabeAnzahl), korrektor);
+					abgabeAnzahl++;
+				}
 			}
-		}
-
-		*/
-		int abgabeAnzahl= 0;
-		Blatt blatt = blattService.getBlatt(id);
-		Korrektor korrektor = korrektorService.getAll().getFirst();
-
-		List<Abgabe> abgaben = blatt.getUnzugeordneteAbgaben();
-
-		for (int i =0; i<korrektor.getStunden(); i++) {
-			if(abgabeAnzahl<abgaben.size()) {
-				blatt.abgabeZuordnen(abgaben.get(i), korrektor);
-				abgabeAnzahl++;
+			nextKorrektor++;
+			if(nextKorrektor<korrektorAnzahl) {
+				korrektor = korrektoren.get(nextKorrektor);
 			}
-
 		}
 
 		blattService.save(blatt);
