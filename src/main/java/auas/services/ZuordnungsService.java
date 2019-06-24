@@ -1,5 +1,6 @@
 package auas.services;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,14 +30,37 @@ public class ZuordnungsService {
 		// auch die hier nicht verwendeten Methoden an
 		// 2. Löschen Sie diesen Code, bevor Sie die faire Verteilung
 		// implementieren
+	/*
+		Blatt blatt = blattService.getBlatt(id);
 
+		int anzahlKorrektoren= korrektorService.getAll().size();
+		int abgabeAnzahl= 0;
+
+		List<Korrektor> korrektors= (LinkedList) korrektorService.getAll();
+		List<Abgabe> abgaben = blatt.getUnzugeordneteAbgaben();
+
+
+		for(int i= 0; i<anzahlKorrektoren; i++){
+			Korrektor korrektor = korrektors.get(i);
+			for (int j =0; j<korrektor.getStunden(); j++) {
+				blatt.abgabeZuordnen(abgaben.get(abgabeAnzahl), korrektor);
+				abgabeAnzahl++;
+			}
+		}
+
+		*/
+		int abgabeAnzahl= 0;
 		Blatt blatt = blattService.getBlatt(id);
 		Korrektor korrektor = korrektorService.getAll().getFirst();
 
 		List<Abgabe> abgaben = blatt.getUnzugeordneteAbgaben();
 
 		for (int i =0; i<korrektor.getStunden(); i++) {
-			blatt.abgabeZuordnen(abgaben.get(i), korrektor);
+			if(abgabeAnzahl<abgaben.size()) {
+				blatt.abgabeZuordnen(abgaben.get(i), korrektor);
+				abgabeAnzahl++;
+			}
+
 		}
 
 		blattService.save(blatt);

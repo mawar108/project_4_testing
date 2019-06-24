@@ -74,7 +74,7 @@ public class ZuordnungsServiceTest {
 	}
 
 	@Test
-	public void einKorrektorElfAbgaben() {
+	public void einKorrektorElfAbgaben_ZehnStunden() {
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "Willi", 10);
 		korrektors.add(willi);
@@ -116,13 +116,13 @@ public class ZuordnungsServiceTest {
 
 		zuordnungsService.abgabenZuordnen(1);
 
-		int x= 0;	// hilfsvariable
+		int anzahlAbagbenAnKorrektor= 0;	// hilfsvariable
 		for(int i=0; i<11; i++) {
 			if (abgaben.get(i).getKorrektor() != null && abgaben.get(i).getKorrektor().getName() == "willi"){
-				x = x + 1;
+				anzahlAbagbenAnKorrektor = anzahlAbagbenAnKorrektor + 1;
 			}
 		}
-		assertEquals((long) 10, (long) x);
+		assertEquals((long) 10, (long) anzahlAbagbenAnKorrektor);
 
 	}
 
@@ -136,7 +136,8 @@ public class ZuordnungsServiceTest {
 		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
 
 		LinkedList<Abgabe> abgaben = new LinkedList<>();
-		for (int i = 0; i < 11; i++) {
+		int anzahlAbagaben= 13;
+		for (int i = 0; i < anzahlAbagaben; i++) {
 			abgaben.add(new Abgabe());
 		}
 		Blatt blatt = new Blatt(1, abgaben);
@@ -147,13 +148,13 @@ public class ZuordnungsServiceTest {
 
 		zuordnungsService.abgabenZuordnen(1);
 
-		int x= 0;	// hilfsvariable
-		for(int i=0; i<11; i++) {
+		int anzahlAbagbenAnKorrektor= 0;	// hilfsvariable
+		for(int i=0; i<anzahlAbagaben; i++) {
 			if (abgaben.get(i).getKorrektor() != null && abgaben.get(i).getKorrektor().getName() == "hans"){
-				x = x + 1;
+				anzahlAbagbenAnKorrektor = anzahlAbagbenAnKorrektor + 1;
 			}
 		}
-		assertEquals((long) 1, (long) x);
+		assertEquals((long) 3, (long) anzahlAbagbenAnKorrektor);
 
 	}
 
