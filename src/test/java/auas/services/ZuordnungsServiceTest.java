@@ -1,4 +1,4 @@
-package de.hhu.propra.auas.domain;
+package auas.services;
 
 import auas.dont_touch.database.Database;
 import auas.read_only.domain.*;
@@ -163,7 +163,7 @@ public class ZuordnungsServiceTest {
 	}
 
 	@Test
-	public void zweiKorrektor23Abgaben_prüftUnzugeordneteAbgaben() {
+	public void zweiKorrektor23Abgaben_prüftÜberhangRichtigverteiltAufErstenKorr() {
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "willi", 10);
 		Korrektor hans = new Korrektor(UUID.randomUUID(), "hans", 10);
@@ -184,7 +184,16 @@ public class ZuordnungsServiceTest {
 
 		zuordnungsService.abgabenZuordnen(1);
 
-		assertEquals((long) 3, (long) blatt.getUnzugeordneteAbgaben().size());
+		int anzahlAbagbenAnKorrektor= 0;
+
+		List<Abgabe> zugeordneteAbgaben= blatt.getZugeordneteAbgaben();
+		for(Abgabe abgabe:zugeordneteAbgaben ){
+			if(abgabe.getKorrektor().getName()== willi.getName()){
+				anzahlAbagbenAnKorrektor++;
+			}
+		}
+
+		assertEquals((long) 12, (long) anzahlAbagbenAnKorrektor);
 
 	}
 
