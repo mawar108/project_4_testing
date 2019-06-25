@@ -16,6 +16,7 @@ public class ZuordnungsService {
 
 	private BlattService blattService;
 	private KorrektorService korrektorService;
+	private int nextKorrektor = 0;
 
 	@Inject
 	public ZuordnungsService(BlattService blattService, KorrektorService korrektorService) {
@@ -25,28 +26,36 @@ public class ZuordnungsService {
 
 	public void abgabenZuordnen(int id) {
 		Blatt blatt = blattService.getBlatt(id);
-		List<Korrektor> korrektoren= (LinkedList) korrektorService.getAll();
+		List<Korrektor> korrektoren = (LinkedList) korrektorService.getAll();
 
-		int nextKorrektor=0;
-		int abgabeAnzahl= 0;
-		int korrektorAnzahl= korrektoren.size();
 
-		Korrektor korrektor= korrektoren.get(nextKorrektor);
+		int abgabeAnzahl = 0;
+		int korrektorAnzahl = korrektoren.size();
+
+		Korrektor korrektor = korrektoren.get(nextKorrektor);
 		List<Abgabe> abgaben = blatt.getUnzugeordneteAbgaben();
 
-		for(int j= 0; j<korrektorAnzahl;j++){
-			for (int i =0; i<korrektor.getStunden(); i++) {
-				if(abgabeAnzahl<abgaben.size()) {
+		for (int j = 0; j < korrektorAnzahl; j++) {
+			for (int i = 0; i < korrektor.getStunden(); i++) {
+				if (abgabeAnzahl < abgaben.size()) {
 					blatt.abgabeZuordnen(abgaben.get(abgabeAnzahl), korrektor);
 					abgabeAnzahl++;
 				}
 			}
-			nextKorrektor++;
-			if(nextKorrektor<korrektorAnzahl) {
-				korrektor = korrektoren.get(nextKorrektor);
-			}
+			korrektor= korrektorWechsel(korrektoren);
 		}
 
 		blattService.save(blatt);
+	}
+
+	private Korrektor korrektorWechsel(List<Korrektor> korrektoren) {
+		nextKorrektor++;
+		if (nextKorrektor < korrektoren.size()) {
+			return korrektoren.get(nextKorrektor);
+		}
+		else{
+			nextKorrektor=0;
+			return korrektoren.get(nextKorrektor);
+		}
 	}
 }
