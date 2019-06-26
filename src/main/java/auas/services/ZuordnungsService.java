@@ -32,8 +32,8 @@ public class ZuordnungsService {
 
 		int abgabeAnzahl = 0;
 		int korrektorAnzahl = korrektoren.size();
-
 		Korrektor korrektor = korrektoren.get(nextKorrektor);
+
 
 		for (int j = 0; j < korrektorAnzahl; j++) {
 			for (int i = 0; i < korrektor.getStunden(); i++) {
@@ -42,7 +42,13 @@ public class ZuordnungsService {
 					abgabeAnzahl++;
 				}
 			}
-			korrektor= korrektorWechsel(korrektoren);
+			korrektor = korrektorWechsel(korrektoren);
+		}
+		korrektor=korrektoren.get(0);
+		while(abgabeAnzahl<abgaben.size()){
+			blatt.abgabeZuordnen(abgaben.get(abgabeAnzahl),korrektor);
+			korrektor=korrektorWechsel(korrektoren);
+			abgabeAnzahl++;
 		}
 
 		blattService.save(blatt);
@@ -58,5 +64,4 @@ public class ZuordnungsService {
 			return korrektoren.get(nextKorrektor);
 		}
 	}
-
 }
