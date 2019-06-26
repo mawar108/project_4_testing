@@ -117,7 +117,7 @@ public class ZuordnungsServiceTest {
 	}
 
 	@Test
-	public void zweiKorrektorZwölfAbgaben_prüftErstenKorrektorErhältAbgaben() {
+	public void zweiKorrektor20Abgaben_prüftErstenKorrektorErhältAbgaben() {
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "willi", 10);
 		Korrektor hans = new Korrektor(UUID.randomUUID(), "hans", 10);
@@ -125,7 +125,7 @@ public class ZuordnungsServiceTest {
 		korrektors.add(hans);
 		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
 
-		int anzahlAbgaben= 12;
+		int anzahlAbgaben= 20;
 		LinkedList<Abgabe> abgaben = new LinkedList<>();
 		for (int i = 0; i < anzahlAbgaben; i++) {
 			abgaben.add(new Abgabe());
@@ -145,7 +145,7 @@ public class ZuordnungsServiceTest {
 				anzahlAbagbenAnKorrektor++;
 			}
 		}
-		assertEquals((long) 6, (long) anzahlAbagbenAnKorrektor);
+		assertEquals((long) 10, (long) anzahlAbagbenAnKorrektor);
 
 	}
 
