@@ -16,12 +16,13 @@ public class ZuordnungsService {
 
 	private BlattService blattService;
 	private KorrektorService korrektorService;
-	private int nextKorrektorÜberhang=0;
+	private int nextKorrektorÜberhang;
 
 	@Inject
 	public ZuordnungsService(BlattService blattService, KorrektorService korrektorService) {
 		this.blattService = blattService;
 		this.korrektorService = korrektorService;
+		this.nextKorrektorÜberhang=0;
 	}
 
 	public void abgabenZuordnen(int id) {
@@ -47,7 +48,7 @@ public class ZuordnungsService {
 		blattService.save(blatt);
 	}
 
-	public int gesamtStunden(){
+	private int gesamtStunden(){
 		List<Korrektor> korrektoren  = (LinkedList) korrektorService.getAll();
 		int gesamtStunden= 0;
 		for(int i = 0; i<korrektoren.size();i++){
@@ -57,7 +58,7 @@ public class ZuordnungsService {
 	}
 
 
-	public double verteilungsFormel(Korrektor korrektor,int abgabenanzahl){
+	private double verteilungsFormel(Korrektor korrektor,int abgabenanzahl){
 		return Math.floor(((double)abgabenanzahl/gesamtStunden())*korrektor.getStunden());
 	}
 
