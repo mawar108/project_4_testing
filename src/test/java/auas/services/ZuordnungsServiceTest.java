@@ -32,6 +32,7 @@ public class ZuordnungsServiceTest {
 		this.zuordnungsService = new ZuordnungsService(blattServiceMock, korrektorServiceMock);
 	}
 
+	@Test
 	public void einKorrektorZehnAbgaben_ZehnStunden() {
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "Willi", 10);

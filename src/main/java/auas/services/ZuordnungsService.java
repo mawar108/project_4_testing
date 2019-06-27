@@ -16,6 +16,7 @@ public class ZuordnungsService {
 
 	private BlattService blattService;
 	private KorrektorService korrektorService;
+	private int nextKorrektorÜberhang=0;
 
 	@Inject
 	public ZuordnungsService(BlattService blattService, KorrektorService korrektorService) {
@@ -24,23 +25,47 @@ public class ZuordnungsService {
 	}
 
 	public void abgabenZuordnen(int id) {
-
-		// Beispielimplementierung: Der erste Korrektor bekommt alle Abgaben
-		// 1. Verstehen Sie die BlattService API. Schauen Sie
-		// auch die hier nicht verwendeten Methoden an
-		// 2. Löschen Sie diesen Code, bevor Sie die faire Verteilung
-		// implementieren
-
 		Blatt blatt = blattService.getBlatt(id);
-		Korrektor korrektor = korrektorService.getAll().getFirst();
-
+		List<Korrektor> korrektoren  = (LinkedList) korrektorService.getAll();
 		List<Abgabe> abgaben = blatt.getUnzugeordneteAbgaben();
 
-		for (Abgabe abgabe : abgaben) {
-			blatt.abgabeZuordnen(abgabe, korrektor);
+		int nextAbgabe=0;
+		for(int i= 0; i<korrektoren.size(); i++){ // gehe durch die Koorektorren durch
+			for(int j=0; j<verteilungsFormel(korrektoren.get(i),abgaben);j++){ // Verteile die Abgaben
+				blatt.abgabeZuordnen(abgaben.get(nextAbgabe), korrektoren.get(i));
+				nextAbgabe++;
+			}
 		}
 
+		while(blatt.getUnzugeordneteAbgaben().size()>0){
+			blatt.abgabeZuordnen(abgaben.get(nextAbgabe), korrektoren.get(nextKorrektorÜberhang));
+			nextAbgabe++;
+			korrektorWechsel(korrektoren);
+		}
+
+
 		blattService.save(blatt);
+	}
+
+	private int gesamtStunden(){
+		List<Korrektor> korrektoren  = (LinkedList) korrektorService.getAll();
+		int gesamtStunden= 0;
+		for(int i = 0; i<korrektoren.size();i++){
+			gesamtStunden= gesamtStunden+korrektoren.get(i).getStunden();
+		}
+		return gesamtStunden;
+	}
+
+
+	private int verteilungsFormel(Korrektor korrektor,List<Abgabe> abgaben ){
+		return (int)Math.floor((abgaben.size()/gesamtStunden())*korrektor.getStunden());
+	}
+
+	private void korrektorWechsel(List<Korrektor> korrektoren) {
+		nextKorrektorÜberhang++;
+		if (nextKorrektorÜberhang >= korrektoren.size()) {
+			nextKorrektorÜberhang = 0;
+		}
 	}
 
 }
