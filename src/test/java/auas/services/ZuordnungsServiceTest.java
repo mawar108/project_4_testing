@@ -32,23 +32,44 @@ public class ZuordnungsServiceTest {
 		this.zuordnungsService = new ZuordnungsService(blattServiceMock, korrektorServiceMock);
 	}
 
+	public Blatt erstelleAbgaben(int abgabeAnzahl){
+		LinkedList<Abgabe> abgaben = new LinkedList<>();
+		for (int i = 0; i < abgabeAnzahl; i++) {
+			abgaben.add(new Abgabe());
+		}
+		Blatt blatt = new Blatt(1, abgaben);
+		when(blattServiceMock.getBlatt(1)).thenReturn(blatt);
+		when(blattMock.getUnzugeordneteAbgaben()).thenReturn(abgaben);
+		return blatt;
+	}
+
+
 	@Test
-	public void einKorrektorZehnAbgaben_ZehnStunden() {
+	public void einKorrektorKeineAbgabe() {
+		//Korrektor wird erstellt
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "Willi", 10);
 		korrektors.add(willi);
 		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
 
-		LinkedList<Abgabe> abgaben = new LinkedList<>();
-		for (int i = 0; i < 10; i++) {
-			abgaben.add(new Abgabe());
-		}
-		Blatt blatt = new Blatt(1, abgaben);
-		when(blattServiceMock.getBlatt(1)).thenReturn(blatt);
+		//Abgaben werden erstellt
+		Blatt blatt= erstelleAbgaben(0);
 
-		when(blattMock.getUnzugeordneteAbgaben()).thenReturn(abgaben);
+		zuordnungsService.abgabenZuordnen(1);
 
+		assertEquals((long) 0, blatt.anzahlZugeordneteAbgaben());
+	}
 
+	@Test
+	public void einKorrektorZehnAbgaben_ZehnStunden() {
+		//Korrektor wird erstellt
+		LinkedList<Korrektor> korrektors = new LinkedList<>();
+		Korrektor willi = new Korrektor(UUID.randomUUID(), "Willi", 10);
+		korrektors.add(willi);
+		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
+
+		//Abgaben werden erstellt
+		Blatt blatt= erstelleAbgaben(10);
 		zuordnungsService.abgabenZuordnen(1);
 
 		assertEquals((long) 10, blatt.anzahlZugeordneteAbgaben());
@@ -57,20 +78,14 @@ public class ZuordnungsServiceTest {
 
 	@Test
 	public void einKorrektorElfAbgaben_ZehnStunden() {
+		//Korrektor wird erstellt
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "Willi", 10);
 		korrektors.add(willi);
 		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
 
-		LinkedList<Abgabe> abgaben = new LinkedList<>();
-		for (int i = 0; i < 11; i++) {
-			abgaben.add(new Abgabe());
-		}
-		Blatt blatt = new Blatt(1, abgaben);
-		when(blattServiceMock.getBlatt(1)).thenReturn(blatt);
-
-		when(blattMock.getUnzugeordneteAbgaben()).thenReturn(abgaben);
-
+		//Abgaben erstllen
+		Blatt blatt= erstelleAbgaben(11);
 
 		zuordnungsService.abgabenZuordnen(1);
 
@@ -79,6 +94,7 @@ public class ZuordnungsServiceTest {
 
 	@Test
 	public void zweiKorrektor20Abgaben_prüftErstenKorrektorErhältAbgaben() {
+		//Korrektoren werden erstellt
 		LinkedList<Korrektor> korrektors = new LinkedList<>();
 		Korrektor willi = new Korrektor(UUID.randomUUID(), "willi", 10);
 		Korrektor hans = new Korrektor(UUID.randomUUID(), "hans", 10);
@@ -86,16 +102,8 @@ public class ZuordnungsServiceTest {
 		korrektors.add(hans);
 		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
 
-		int anzahlAbgaben = 20;
-		LinkedList<Abgabe> abgaben = new LinkedList<>();
-		for (int i = 0; i < anzahlAbgaben; i++) {
-			abgaben.add(new Abgabe());
-		}
-		Blatt blatt = new Blatt(1, abgaben);
-		when(blattServiceMock.getBlatt(1)).thenReturn(blatt);
-
-		when(blattMock.getUnzugeordneteAbgaben()).thenReturn(abgaben);
-
+		//Abgaben werden erstellt
+		Blatt blatt= erstelleAbgaben(20);
 
 		zuordnungsService.abgabenZuordnen(1);
 
@@ -109,4 +117,30 @@ public class ZuordnungsServiceTest {
 		assertEquals((long) 10, (long) anzahlAbagbenAnKorrektor);
 	}
 
+	@Test
+	public void zweiKorrektor20Abgaben_prüftEsrKorrektorErhältAbgaben() {
+		//Korrektor werden erstellt
+		LinkedList<Korrektor> korrektors = new LinkedList<>();
+		Korrektor willi = new Korrektor(UUID.randomUUID(), "willi", 10);
+		Korrektor hans = new Korrektor(UUID.randomUUID(), "hans", 10);
+		korrektors.add(willi);
+		korrektors.add(hans);
+		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
+
+		//Abgaben werden erstellt
+		Blatt blatt= erstelleAbgaben(20);
+
+		zuordnungsService.abgabenZuordnen(1);
+
+		int anzahlAbagbenAnKorrektor = 0;
+		List<Abgabe> zugeordneteAbgaben = blatt.getZugeordneteAbgaben();
+		for (Abgabe abgabe : zugeordneteAbgaben) {
+			if (abgabe.getKorrektor().getName() == hans.getName()) {
+				anzahlAbagbenAnKorrektor++;
+			}
+		}
+
+		assertEquals((long) 10, (long) anzahlAbagbenAnKorrektor);
+
+	}
 }
