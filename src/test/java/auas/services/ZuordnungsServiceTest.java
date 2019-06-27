@@ -32,9 +32,80 @@ public class ZuordnungsServiceTest {
 		this.zuordnungsService = new ZuordnungsService(blattServiceMock, korrektorServiceMock);
 	}
 
-	@Test
-	public void Test(){
+	public void einKorrektorZehnAbgaben_ZehnStunden() {
+		LinkedList<Korrektor> korrektors = new LinkedList<>();
+		Korrektor willi = new Korrektor(UUID.randomUUID(), "Willi", 10);
+		korrektors.add(willi);
+		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
 
+		LinkedList<Abgabe> abgaben = new LinkedList<>();
+		for (int i = 0; i < 10; i++) {
+			abgaben.add(new Abgabe());
+		}
+		Blatt blatt = new Blatt(1, abgaben);
+		when(blattServiceMock.getBlatt(1)).thenReturn(blatt);
+
+		when(blattMock.getUnzugeordneteAbgaben()).thenReturn(abgaben);
+
+
+		zuordnungsService.abgabenZuordnen(1);
+
+		assertEquals((long) 10, blatt.anzahlZugeordneteAbgaben());
+	}
+
+
+	@Test
+	public void einKorrektorElfAbgaben_ZehnStunden() {
+		LinkedList<Korrektor> korrektors = new LinkedList<>();
+		Korrektor willi = new Korrektor(UUID.randomUUID(), "Willi", 10);
+		korrektors.add(willi);
+		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
+
+		LinkedList<Abgabe> abgaben = new LinkedList<>();
+		for (int i = 0; i < 11; i++) {
+			abgaben.add(new Abgabe());
+		}
+		Blatt blatt = new Blatt(1, abgaben);
+		when(blattServiceMock.getBlatt(1)).thenReturn(blatt);
+
+		when(blattMock.getUnzugeordneteAbgaben()).thenReturn(abgaben);
+
+
+		zuordnungsService.abgabenZuordnen(1);
+
+		assertEquals((long) 11, blatt.anzahlZugeordneteAbgaben());
+	}
+
+	@Test
+	public void zweiKorrektor20Abgaben_prüftErstenKorrektorErhältAbgaben() {
+		LinkedList<Korrektor> korrektors = new LinkedList<>();
+		Korrektor willi = new Korrektor(UUID.randomUUID(), "willi", 10);
+		Korrektor hans = new Korrektor(UUID.randomUUID(), "hans", 10);
+		korrektors.add(willi);
+		korrektors.add(hans);
+		when(korrektorServiceMock.getAll()).thenReturn(korrektors);
+
+		int anzahlAbgaben = 20;
+		LinkedList<Abgabe> abgaben = new LinkedList<>();
+		for (int i = 0; i < anzahlAbgaben; i++) {
+			abgaben.add(new Abgabe());
+		}
+		Blatt blatt = new Blatt(1, abgaben);
+		when(blattServiceMock.getBlatt(1)).thenReturn(blatt);
+
+		when(blattMock.getUnzugeordneteAbgaben()).thenReturn(abgaben);
+
+
+		zuordnungsService.abgabenZuordnen(1);
+
+		int anzahlAbagbenAnKorrektor = 0;
+		List<Abgabe> zugeordneteAbgaben = blatt.getZugeordneteAbgaben();
+		for (Abgabe abgabe : zugeordneteAbgaben) {
+			if (abgabe.getKorrektor().getName() == willi.getName()) {
+				anzahlAbagbenAnKorrektor++;
+			}
+		}
+		assertEquals((long) 10, (long) anzahlAbagbenAnKorrektor);
 	}
 
 }
