@@ -31,7 +31,7 @@ public class ZuordnungsService {
 
 		int nextAbgabe=0;
 		for(int i= 0; i<korrektoren.size(); i++){ // gehe durch die Koorektorren durch
-			for(int j=0; j<verteilungsFormel(korrektoren.get(i),abgaben);j++){ // Verteile die Abgaben
+			for(int j=0; j<verteilungsFormel(korrektoren.get(i),abgaben.size());j++){ // Verteile die Abgaben
 				blatt.abgabeZuordnen(abgaben.get(nextAbgabe), korrektoren.get(i));
 				nextAbgabe++;
 			}
@@ -47,7 +47,7 @@ public class ZuordnungsService {
 		blattService.save(blatt);
 	}
 
-	private int gesamtStunden(){
+	public int gesamtStunden(){
 		List<Korrektor> korrektoren  = (LinkedList) korrektorService.getAll();
 		int gesamtStunden= 0;
 		for(int i = 0; i<korrektoren.size();i++){
@@ -57,8 +57,8 @@ public class ZuordnungsService {
 	}
 
 
-	private int verteilungsFormel(Korrektor korrektor,List<Abgabe> abgaben ){
-		return (int)Math.floor((abgaben.size()/gesamtStunden())*korrektor.getStunden());
+	public double verteilungsFormel(Korrektor korrektor,int abgabenanzahl){
+		return Math.floor(((double)abgabenanzahl/gesamtStunden())*korrektor.getStunden());
 	}
 
 	private void korrektorWechsel(List<Korrektor> korrektoren) {
